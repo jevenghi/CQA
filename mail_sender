@@ -6,9 +6,9 @@ from email import encoders
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-MAIL_USERNAME = "jevenghi@gmail.com"
+MAIL_USERNAME = "@gmail.com"
 MAIL_PASSWORD = "pass"
-SENDER_MAIL = "jevenghi@mail.com"
+SENDER_MAIL = "@mail.com"
 
 message = MIMEMultipart()
 message["Subject"] = "Subject"
