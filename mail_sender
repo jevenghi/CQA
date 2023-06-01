@@ -4,34 +4,35 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email import encoders
 
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-MAIL_USERNAME = "@gmail.com"
-MAIL_PASSWORD = "pass"
-SENDER_MAIL = "@mail.com"
 
-message = MIMEMultipart()
-message["Subject"] = "Subject"
-message["From"] = SENDER_MAIL
-message["To"] = SENDER_MAIL
+class MailSender:
+    SMTP_SERVER = "smtp.gmail.com"
+    SMTP_PORT = 587
+    MAIL_PASSWORD = "pass"
+    SENDER_MAIL = "@mail.com"
 
-mail_body = MIMEText("Report attached")
-message.attach(mail_body)
+    def __init__(self, recipient_email):
+        self.recipient_email = recipient_email
 
-attached_report_path = "./reports/JVGL106871001279509725.pdf"
-report_name = "JVGL106871001279509725.pdf"
+    def send_email(self, subject, body, attachment_path, report_name):
+        message = MIMEMultipart()
+        message["Subject"] = subject
+        message["From"] = self.SENDER_MAIL
+        message["To"] = self.recipient_email
 
-with open(attached_report_path, 'rb') as attachment_file:
-    part = MIMEBase('application', 'octet-stream')
-    part.set_payload(attachment_file.read())
+        mail_body = MIMEText(body)
+        message.attach(mail_body)
 
-encoders.encode_base64(part)
-part.add_header('Content-Disposition', f'attachment; filename="{report_name}"')
+        with open(attachment_path, 'rb') as attachment_file:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(attachment_file.read())
 
-message.attach(part)
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename="{report_name}"')
 
-with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-    server.starttls()
-    server.login(MAIL_USERNAME, MAIL_PASSWORD)
-    server.send_message(message)
+        message.attach(part)
 
+        with smtplib.SMTP(self.SMTP_SERVER, self.SMTP_PORT) as server:
+            server.starttls()
+            server.login(self.SENDER_MAIL, self.MAIL_PASSWORD)
+            server.send_message(message)
